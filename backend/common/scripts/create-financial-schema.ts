@@ -2,8 +2,8 @@
 
 // 创建财报分析 Schema 的脚本
 import { FinancialReportService } from '../schema/service';
-import { RagflowApiAdapter } from '../adapters/ragflow-api.adapter';
-import { validateRagflowConfig } from '../config/ragflow.config';
+import { RagflowApiAdapter } from '../../lib/database/src/adapters/ragflow-api.adapter';
+import { validateRagflowConfig } from '../../server/src/ragflow.config';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 

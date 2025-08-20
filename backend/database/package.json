@@ -1,0 +1,33 @@
+{
+  "name": "@zhitou/database",
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "push": "dotenv -- drizzle-kit push",
+    "migrate": "tsx migrate.ts",
+    "generate": "drizzle-kit generate"
+  },
+  "dependencies": {
+    "dotenv": "*",
+    "drizzle-orm": "*",
+    "drizzle-zod": "*",
+    "uuid": "*",
+    "pg": "*",
+    "zod": "*"
+  },
+  "devDependencies": {
+    "@zhitou/tsconfig": "workspace:*",
+    "@types/node": "*",
+    "@types/pg": "*",
+    "@types/uuid": "*",
+    "drizzle-kit": "*",
+    "typescript": "*"
+  }
+}
