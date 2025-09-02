@@ -1,4 +1,4 @@
-import { getLogger } from "@server/lib/plugins/winston";
+import { getLogger } from "../lib/plugins/winston";
 import type { Context, MiddlewareHandler, Next } from "hono";
 import type { Logger } from "winston";
 

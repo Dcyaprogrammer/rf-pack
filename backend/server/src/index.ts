@@ -24,8 +24,7 @@ import loggerMiddleware from "./middleware/logger";
 
 /* Error */
 import { DatabaseError } from "pg";
-import { UserFriendlyError } from "@achat/error";
-import BizError, { BizCodeEnum } from "@achat/error/biz";
+import BizError, { BizCodeEnum } from "./lib/error/biz";
 
 /* Business Routes */
 import systemRouter from "./routes/system";
@@ -37,7 +36,7 @@ import type { ConnInfo } from "hono/conninfo";
 // import type { Redis } from "ioredis";
 import type { Logger } from "winston";
 import { auth, type Auth } from "./lib/auth";
-import type { DataBase } from "../../database";
+import type { DataBase } from "@zhitou/database";
 // import { inngestHandler } from "./queues";
 
 declare module "hono" {

@@ -1,4 +1,4 @@
-import * as schema from "@achat/database/schema";
+import * as schema from "@zhitou/database/schema";
 import { betterAuth, type BetterAuthOptions } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import {
@@ -12,7 +12,7 @@ import {
   username,
 } from "better-auth/plugins";
 import { passkey } from "better-auth/plugins/passkey";
-import db from "../../../database";
+import db from "../lib/db";
 import { v7 as uuidv7 } from "uuid";
 
 const authConfig = {

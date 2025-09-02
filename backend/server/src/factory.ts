@@ -1,7 +1,7 @@
 import { createFactory } from "hono/factory";
 import { auth, type AuthSession } from "./lib/auth";
 import { authMiddleware } from "./middleware/auth";
-import db from "../../database";
+import db from "./lib/db";
 
 export const appFactory = createFactory<{
   Variables: {

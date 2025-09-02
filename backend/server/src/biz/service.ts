@@ -1,10 +1,10 @@
 // Ragflow 业务服务 - 业务逻辑层
-import { RagflowClient } from '../../lib/external/ragflow/ragflow-client';
+import { RagflowClient } from '../lib/client';
 import type {
   CreateDatasetRequest,
   ManageParsingRequest,
   CreateChatAssistantRequest
-} from '../../lib/external/ragflow/types';
+} from '../types';
 
 export class RagflowFinancialService {
   private ragflowClient: RagflowClient;
@@ -51,59 +51,6 @@ export class RagflowFinancialService {
     }
   }
 
-  // 解析文档
-  async parseReports(datasetId: string, documentIds: string[]) {
-    try {
-      const parseRequest: ManageParsingRequest = {
-        document_ids: documentIds
-      };
-      const response = await this.ragflowClient.parseDocuments(datasetId, parseRequest);
-      console.log('财报文档解析开始:', response.data);
-      return response;
-    } catch (error) {
-      console.error('解析文档失败:', error);
-      throw error;
-    }
-  }
-
-  // 创建分析助手
-  async createAssistant(datasetIds: string[]) {
-    try {
-      const assistantConfig: CreateChatAssistantRequest = {
-        name: "财报分析专家",
-        description: "专业的财报分析助手，能够解读财务报表、分析经营状况、识别风险点",
-        dataset_ids: datasetIds,
-        llm: {
-          model_name: "deepseek-chat@Deepseek",
-          temperature: 0.3,
-          top_p: 0.9
-        },
-        prompt: {
-          prompt: `你是一位专业的财务分析师，专门负责解读和分析企业财报。
-
-请基于提供的财报信息，帮助用户：
-1. 分析财务报表的关键指标
-2. 解读经营状况和趋势
-3. 识别潜在风险和机会
-4. 提供投资建议和决策支持
-
-请确保回答准确、专业，并基于财报数据提供具体分析。`,
-          similarity_threshold: 0.7,
-          top_n: 5,
-          show_quote: true,
-          empty_response: "抱歉，我在财报中没有找到相关信息，请检查查询内容或提供更多上下文。"
-        }
-      };
-
-      const response = await this.ragflowClient.createChatAssistant(assistantConfig);
-      console.log('财报分析助手创建成功:', response.data);
-      return response.data?.data?.id;
-    } catch (error) {
-      console.error('创建助手失败:', error);
-      throw error;
-    }
-  }
-
   // 完整的设置流程
   async setupSystem(pdfFiles: File[]) {
     try {
@@ -120,20 +67,11 @@ export class RagflowFinancialService {
       console.log('📤 上传财报PDF文档...');
       const uploadedDocs = await this.uploadReports(datasetId, pdfFiles);
       const documentIds = uploadedDocs?.map(doc => doc.id).filter((id): id is string => Boolean(id)) || [];
-      
-      // 3. 解析文档
-      console.log('🔍 开始解析财报文档...');
-      await this.parseReports(datasetId, documentIds);
-      
-      // 4. 创建分析助手
-      console.log('🤖 创建财报分析助手...');
-      const assistantId = await this.createAssistant([datasetId]);
-      
-      console.log('✅ 财报分析系统设置完成！');
+      console.log('✅ 数据集创建与文件上传完成');
       console.log('📊 数据集ID:', datasetId);
-      console.log('🤖 助手ID:', assistantId);
-      
-      return { datasetId, assistantId, documentIds };
+      console.log('📄 文档IDs:', documentIds);
+
+      return { datasetId, documentIds };
     } catch (error) {
       console.error('❌ 设置财报分析系统失败:', error);
       throw error;

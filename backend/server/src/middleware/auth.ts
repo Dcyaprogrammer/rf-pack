@@ -1,8 +1,8 @@
-import type { AuthSession } from "@server/lib/auth";
+import type { AuthSession } from "../lib/auth";
 import type { MiddlewareHandler } from "hono";
-import { auth } from "@server/lib/auth";
-import { BizCodeEnum } from "@achat/error/biz";
-import BizError from "@achat/error/biz";
+import { auth } from "../lib/auth";
+import { BizCodeEnum } from "../lib/error/biz";
+import BizError from "../lib/error/biz";
 
 export const authMiddleware: MiddlewareHandler<{
   Variables: {

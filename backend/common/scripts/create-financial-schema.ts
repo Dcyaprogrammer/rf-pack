@@ -1,9 +1,8 @@
 #!/usr/bin/env tsx
-
 // 创建财报分析 Schema 的脚本
-import { FinancialReportService } from '../schema/service';
-import { RagflowApiAdapter } from '../../lib/database/src/adapters/ragflow-api.adapter';
-import { validateRagflowConfig } from '../../server/src/ragflow.config';
+import { RagflowFinancialService } from '../../server/src/biz/service';
+import { RagflowClient } from '../../server/src/lib/client';
+import { RAGFLOW_CONFIG, validateRagflowConfig } from '../../server/src/ragflow.config';
 import { readFileSync } from 'fs';
 import { join } from 'path';
 
@@ -13,8 +12,14 @@ async function createFinancialSchema() {
     validateRagflowConfig();
     
     console.log('🏥 检查 Ragflow 服务状态...');
-    const apiAdapter = new RagflowApiAdapter();
-    const isHealthy = await apiAdapter.healthCheck();
+    const client = new RagflowClient({
+      baseUrl: RAGFLOW_CONFIG.baseUrl,
+      apiKey: RAGFLOW_CONFIG.apiKey,
+      timeout: RAGFLOW_CONFIG.timeout,
+      retries: RAGFLOW_CONFIG.retries,
+    });
+    const service = new RagflowFinancialService(client);
+    const isHealthy = await service.healthCheck();
     
     if (!isHealthy) {
       console.error('❌ Ragflow 服务不可用，请确保服务正在运行');
@@ -27,15 +32,12 @@ async function createFinancialSchema() {
     
     console.log('✅ Ragflow 服务健康检查通过');
     
-    // 创建财报分析服务
-    const service = new FinancialReportService();
+    // 创建财报分析服务（已在上方创建）
     
     // 准备真实的 PDF 文件路径
     const pdfFiles = [
       // 替换为你的实际 PDF 文件路径
-      join(process.cwd(), 'data', '2024-Q1-财报.pdf'),
-      join(process.cwd(), 'data', '2024-Q2-财报.pdf'),
-      join(process.cwd(), 'data', '2024-Q3-财报.pdf')
+      join(process.cwd(), 'data', 'DQN.pdf'),
     ];
     
     // 检查文件是否存在
@@ -67,19 +69,17 @@ async function createFinancialSchema() {
     
     console.log('🚀 开始创建财报分析 Schema...');
     
-    // 使用服务设置整个系统
+    // 仅测试创建数据集与上传文件
     const result = await service.setupSystem(fileObjects);
     
-    console.log('🎉 财报分析 Schema 创建成功！');
+    console.log('🎉 数据集创建与文件上传成功！');
     console.log('📊 数据集ID:', result.datasetId);
-    console.log('🤖 助手ID:', result.assistantId);
     console.log('📄 文档IDs:', result.documentIds);
     
     // 保存结果到文件（可选）
     const resultData = {
       timestamp: new Date().toISOString(),
       datasetId: result.datasetId,
-      assistantId: result.assistantId,
       documentIds: result.documentIds,
       status: 'success'
     };
@@ -104,9 +104,7 @@ async function createFinancialSchema() {
   }
 }
 
-// 如果直接运行这个脚本
-if (import.meta.main) {
-  createFinancialSchema();
-}
+// 直接执行（兼容 CJS/ESM 环境）
+void createFinancialSchema();
 
 export { createFinancialSchema };
